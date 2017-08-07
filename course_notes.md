@@ -75,6 +75,7 @@ export default SearchBar;
 
 #### Section 1, Lesson 16: Handling User Events
 
+````
 // This will make monitor the input value by using an Event Handler
 
 import React, { Component } from 'react';
@@ -114,8 +115,10 @@ class SearchBar extends Component {
 
 export default SearchBar;
 
+````
 #### Section 1, Lesson 17: Introduction to State
 
+````
 // State: is a plain javasciript object that is used to Record and React to user events
 // each class based compont has it's own state object. partents and all childen get reinitialzed as well.
 
@@ -140,10 +143,48 @@ class SearchBar extends Component {
 
 export default SearchBar;
 
+````
 #### Section 1, Lesson 18: More on State
+````
+import React, { Component } from 'react';
 
+class SearchBar extends Component {
+    constructor(props) {
+        super(props);
 
+        this.state = { term: '' }
+        // only do state, equals, in Constuctor.
+    }
 
+	render() {
+		return (
+            <div>
+                <input onChange={event => this.setState({ term: event.target.value })} />;
+                // Change state using this.setState
+                Value of the input: {this.state.term}
+                // This "Value of the input:" shows the this.state.term on the DOM
+            </div>
+        );
+	}
+}
+
+export default SearchBar;
+
+````
+#### Section 1, Lesson 19: Controlled Components
+````
+render() {
+		return (
+			<div>
+				<input 
+					value={this.state.term}
+					onChange={event => this.setState({ term: event.target.value })}
+				/>
+			</div>
+		);
+	}
+	// input is a Controlled Component (look up defination)
+````
 
 #### Section 1, Lesson 20: Breather and Review
 
@@ -171,3 +212,121 @@ app current structor:
 - user enters text, updates state, causisng entime component to re-render.
 
 ### Section: 2
+
+#### Section 2, Lesson 21: Youtube Search Response
+- Downwards Data Flow: Only the most parent component is responsible for fetching data. (from api, flux, redux...)
+- index is the most parent in my app.
+- //This line above was added to import the youtube api search
+- //this is a sample test search for 'surfboards'
+
+````
+import React from 'react';
+import ReactDOM from 'react-dom';
+import YTSearch from 'youtube-api-search';
+//This line above was added to import the youtube api search
+
+import SearchBar from './components/search_bar';
+
+
+const API_KEY = 'AIzaSyCRIVKyQtDyr2YXN3W7LjtMU-p-igDNcFw';
+
+YTSearch({key: API_KEY, term: 'surfboards'}, function (data) {
+	console.log(data);
+})
+//this is a sample test search for 'surfboards'
+
+const App = () => {
+	return (
+		<div>
+			<SearchBar />
+		</div>
+	);
+};
+
+
+ReactDOM.render(<App />, document.querySelector('.container'));
+````
+#### Section 2, Lesson 22: Refactoring Functional Components to a Class Component
+- Changed from Functional Based Component to Class Based Component
+- Exteneded { Component } under import line.
+
+````
+import React, { Component } from 'react';
+// import Component object, so we can Extend from it
+import ReactDOM from 'react-dom';
+import YTSearch from 'youtube-api-search';
+import SearchBar from './components/search_bar';
+
+const API_KEY = 'AIzaSyCRIVKyQtDyr2YXN3W7LjtMU-p-igDNcFw';
+
+
+
+// will restruct app based component from functional to class based component
+class App extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = { videos: [] };
+
+		YTSearch({key: API_KEY, term: 'surfboards'}, (videos) => {
+			this.setState({ videos });
+			// Refactored: When you have the vaiable and the value being the same, you can just use the variable
+			// this.setState({ videos: videos }); - This is the old Way
+		});
+	}
+
+	render() {
+		return (
+			<div>
+				<SearchBar />
+			</div>
+		);
+	}	
+};
+
+ReactDOM.render(<App />, document.querySelector('.container'));
+````
+
+#### Section 2, Lesson 23: Props
+
+
+````
+
+````
+
+#### Section 2, Lesson 24: Building Lists with Map
+- created video_list_item.js
+
+````
+import React from 'react';
+
+const VideoListItem = (props) => {
+	return <li>Video</li>
+};
+
+export default VideoListItem;
+````
+
+- changed video_list.js
+````
+import React from 'react';
+import VideoListItem from './video_list_item'
+
+
+const VideoList = (props) => {
+	const videoItems = props.videos.map((video) => {
+		return <VideoListItem video={video} />
+	});
+	// added javascript value of 'videoItems' to store the results of the map function
+
+	return (
+		<ul className="col-md-4 list-group">
+			{videoItems}
+		</ul>
+	);
+};
+// made list using Map instead of for loop
+
+export default VideoList;
+
+````
