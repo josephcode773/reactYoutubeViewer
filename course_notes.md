@@ -395,8 +395,219 @@ export default VideoListItem;
 ````
 
 #### Section 2, Lesson 27: Detail Component and Template Strings
+- before making a new component, ask:  does it need to maintain state?
+- created new component called video_detail.js
 
+````
+import React from 'react';
+
+const VideoDetail = ({video}) => {
+	const videoId = video.id.videoId;
+	const url = `https://www.youtube.com/embed/${videoId}`;
+
+	return (
+		<div className="video-detail col-md-8">
+			<div className="embed-responsive embed-responsive-16by9">
+				<iframe className="embed-responsive-item" src={url}></iframe>
+			</div>
+			<div className="details">
+				<div>{video.snippet.title}</div>
+				<div>{video.snippet.description}</div>
+			</div>
+		</div>
+	);
+};
+
+export default VideoDetail;
+````
+
+#### Section 2, Lesson 28: Handling Null Props
+- imported VideoDetail to index.js
+- modified video_detail.js by adding a 'cache' to wait for the video property to load before rendering
+````
+index.js
+
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import YTSearch from 'youtube-api-search';
+import SearchBar from './components/search_bar';
+import VideoList from './components/video_list';
+import VideoDetail from './components/video_detail';
+
+const API_KEY = 'AIzaSyCRIVKyQtDyr2YXN3W7LjtMU-p-igDNcFw';
+
+class App extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = { videos: [] };
+
+		YTSearch({key: API_KEY, term: 'surfboards'}, (videos) => {
+			this.setState({ videos });
+		});
+	}
+
+	render() {
+		return (
+			<div>
+				<SearchBar />
+				<VideoDetail video={this.state.videos[0]} />
+				<VideoList videos={this.state.videos} />
+			</div>
+		);
+	}	
+};
+
+ReactDOM.render(<App />, document.querySelector('.container'));
+````
+
+````
+video_detail.js
+import React from 'react';
+
+const VideoDetail = ({video}) => {
+	if (!video) {
+		return <div>Loading...</div>;
+	};
+	// used to "cache" or wait for the this.state.video to catch up
+
+	const videoId = video.id.videoId;
+	const url = `https://www.youtube.com/embed/${videoId}`;
+
+	return (
+		<div className="video-detail col-md-8">
+			<div className="embed-responsive embed-responsive-16by9">
+				<iframe className="embed-responsive-item" src={url}></iframe>
+			</div>
+			<div className="details">
+				<div>{video.snippet.title}</div>
+				<div>{video.snippet.description}</div>
+			</div>
+		</div>
+	);
+};
+
+export default VideoDetail;
+````
+
+#### Section 2, Lesson 29: Video Selection
+- want to add ability to select video and have it play on the screen
+- implamented callback
+- edited index.js, video_list.js, video_list_item.js
+
+````
+index.js
+
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
+import YTSearch from 'youtube-api-search';
+import SearchBar from './components/search_bar';
+import VideoList from './components/video_list';
+import VideoDetail from './components/video_detail';
+
+const API_KEY = 'AIzaSyCRIVKyQtDyr2YXN3W7LjtMU-p-igDNcFw';
+
+class App extends Component {
+	constructor(props) {
+		super(props);
+
+		this.state = { 
+			videos: [],
+			selectedVideo: null
+		};
+
+		YTSearch({key: API_KEY, term: 'surfboards'}, (videos) => {
+			this.setState({ 
+				videos: videos,
+				selectedVideo: videos[0]
+			});
+		});
+	}
+
+	render() {
+		return (
+			<div>
+				<SearchBar />
+				<VideoDetail video={this.state.selectedVideo} />
+				<VideoList
+					onVideoSelect={selectedVideo => this.setState({selectedVideo})}
+					videos={this.state.videos} 
+				/>
+			</div>
+		);
+	}	
+};
+
+ReactDOM.render(<App />, document.querySelector('.container'));
+````
+
+````
+video_list.js
+
+import React from 'react';
+import VideoListItem from './video_list_item'
+
+
+const VideoList = (props) => {
+	const videoItems = props.videos.map((video) => {
+		return (
+			<VideoListItem
+				onVideoSelect={props.onVideoSelect}
+				key={video.etag} 
+				video={video} 
+			/>
+		);
+	});
+	// added unique key for each element in list. key={video.etag}. etag is provided by youtube api
+
+	return (
+		<ul className="col-md-4 list-group">
+			{videoItems}
+		</ul>
+	);
+};
+
+
+export default VideoList;
 
 ````
 
 ````
+video_list_item.js
+
+import React from 'react';
+
+// const VideoListItem = (props) => {
+// 	const video = props.video;
+// 	return <li>Video</li>
+// };
+//Refactored BELOW!!
+
+// const VideoListItem = ({video}) => {
+// 	return <li>Video</li>
+// };
+//The New Refactored Version. Places 'const video = props.video' to VideoListItem = ({video})
+
+const VideoListItem = ({video, onVideoSelect}) => {
+	// const video = props.video;
+	// const onVideoSelect = props.onVideoSelect;
+	// Refactored as es6, places both as arguments (used to pull multiple properties from prop)
+	const imageUrl = video.snippet.thumbnails.default.url;
+	return (
+		<li onClick={() => onVideoSelect(video)} className="list-group-item">
+			<div className="video-list-media">
+				<div className="media-left">
+					<img className="media-object" src={imageUrl} />
+				</div>
+				<div className="media-body">
+					<div className="media-heading">{video.snippet.title}</div>
+				</div>
+			</div>
+		</li>
+	);
+};
+
+export default VideoListItem;
+````
+
+#### Section 2, Lesson 30: Styling with CSS
