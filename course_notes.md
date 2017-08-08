@@ -330,3 +330,73 @@ const VideoList = (props) => {
 export default VideoList;
 
 ````
+#### Section 2, Lesson 25: List Item Keys
+- edited ONLY video_list.js
+- // added unique key for each element in list. key={video.etag}. etag is provided by youtube api
+
+````
+import React from 'react';
+import VideoListItem from './video_list_item'
+
+
+const VideoList = (props) => {
+	const videoItems = props.videos.map((video) => {
+		return <VideoListItem key={video.etag} video={video} />
+	});
+	// added unique key for each element in list. key={video.etag}. etag is provided by youtube api
+
+	return (
+		<ul className="col-md-4 list-group">
+			{videoItems}
+		</ul>
+	);
+};
+
+
+export default VideoList;
+````
+
+#### Section 2, Lesson 26: Video List Items
+- worked ONLY on video_list_item.js
+- added const video = props.video and then refactored it to: //The New Refactored Version. Places 'const video = props.video' to VideoListItem = ({video})
+- built out list using div and structured it using bootstarap via className tag.
+
+````
+import React from 'react';
+
+// const VideoListItem = (props) => {
+// 	const video = props.video;
+// 	return <li>Video</li>
+// };
+//Refactored BELOW!!
+
+// const VideoListItem = ({video}) => {
+// 	return <li>Video</li>
+// };
+//The New Refactored Version. Places 'const video = props.video' to VideoListItem = ({video})
+
+const VideoListItem = ({video}) => {
+	const imageUrl = video.snippet.thumbnails.default.url;
+	return (
+		<li className="list-group-item">
+			<div className="video-list-media">
+				<div className="media-left">
+					<img className="media-object" src={imageUrl} />
+				</div>
+				<div className="media-body">
+					<div className="media-heading">{video.snippet.title}</div>
+				</div>
+			</div>
+		</li>
+	);
+};
+
+export default VideoListItem;
+````
+
+#### Section 2, Lesson 27: Detail Component and Template Strings
+
+
+````
+
+````
