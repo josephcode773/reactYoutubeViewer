@@ -611,3 +611,8 @@ export default VideoListItem;
 ````
 
 #### Section 2, Lesson 30: Styling with CSS
+// added (to the search_bar.js) div className='search-bar', style tag uses the same name as the component to make it easier to edit.
+- edited search_bar.js and style.css
+- added some styling, did not post, nothing special.
+
+#### Section 2, Lesson 31: Searching for Videos

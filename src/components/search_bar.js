@@ -34,14 +34,14 @@ class SearchBar extends Component {
 
 	render() {
 		return (
-			<div>
-				<input 
+			<div className="search-bar">
+				<input
 					value={this.state.term}
 					onChange={event => this.setState({ term: event.target.value })} />
 			</div>
 		);
 	}
-	// input is a Controlled Component (look up defination)
+	
 }
 
 export default SearchBar;
