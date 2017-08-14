@@ -616,3 +616,127 @@ export default VideoListItem;
 - added some styling, did not post, nothing special.
 
 #### Section 2, Lesson 31: Searching for Videos
+- edited search_bar and added "onInputChange" a new function under the SearchBar Component.
+
+````
+import React, { Component } from "react";
+
+class SearchBar extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = { term: "" };
+  }
+
+  render() {
+    return (
+      <div className="search-bar">
+        <input
+          value={this.state.term}
+          onChange={event => this.onInputChange(event.target.value)}
+        />
+      </div>
+    );
+  }
+
+  onInputChange(term) {
+    this.setState({term});
+    this.props.onSearchTermChange(term);
+  }
+}
+
+export default SearchBar;
+````
+
+#### Section 2, Lesson 32: Throttling Search Term Input
+- Problem: there is a throttle issue where typing starts an immediate search. we don't want that
+-  // 1st add. debounce calls the innerfunction once every 300 milliseconds.
+-  // 2nd change. (replaced inside {} with videoSearch)
+- //3rd add = import _ from 'lodash' 
+
+````
+import _ from 'lodash' //3rd add.
+import React, { Component } from "react";
+import ReactDOM from "react-dom";
+import YTSearch from "youtube-api-search";
+import SearchBar from "./components/search_bar";
+import VideoList from "./components/video_list";
+import VideoDetail from "./components/video_detail";
+
+const API_KEY = "AIzaSyCRIVKyQtDyr2YXN3W7LjtMU-p-igDNcFw";
+
+class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      videos: [],
+      selectedVideo: null
+    };
+
+    this.videoSearch('surfboards');
+  }
+
+  videoSearch(term) {
+    YTSearch({ key: API_KEY, term: term }, videos => {
+      this.setState({
+        videos: videos,
+        selectedVideo: videos[0]
+      });
+    });
+  }
+
+  render() {
+
+    const videoSearch = _.debounce((term) => { this.videoSearch(term) }, 300)
+    // 1st add. debounce calls the innerfunction once every 300 milliseconds.
+
+    return (
+      <div>
+        <SearchBar onSearchTermChange={videoSearch} />
+        // 2nd change. (replaced inside {} with videoSearch)
+        <VideoDetail video={this.state.selectedVideo} />
+        <VideoList
+          onVideoSelect={selectedVideo => this.setState({ selectedVideo })}
+          videos={this.state.videos}
+        />
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(<App />, document.querySelector(".container"));
+````
+
+#### Section 2, Lesson 33: Recap Wrapup
+- use Class Components, when you want to track state. Does NOT use react method of getInitialState.
+- use Functional Components, when you don't.
+- whenever you change state, the Components INSTANTLY re-renders
+- this version uses a heavy amount of Callbacks.  Using Redux will reduce the need for them
+- Component level state = localized. only triggures a change on the Component.  Redux is for the whole application.
+
+#### Section 3, Lesson 34: Foreword on Redux
+1st, description of what redux is and what it does.
+2nd, sample application with a head-start.  it will use our existing boilerplate.
+
+````
+
+````
+
+#### Section 3, Lesson 35: What is Redux?
+- did didn't really say anything noteworthy here...
+
+````
+
+````
+
+#### Section 3, Lesson 36: More on Redux
+- redux is the data, and react is the views.
+
+#### Section 3, Lesson 37: Even More on Redux!
+- seperate in Bucket of Data and a Bucket of Views
+- the most difficult part of modeling a app
+- will model after Tender
+
+#### Section 3, Lesson 38: Putting Redux to Practice
+
